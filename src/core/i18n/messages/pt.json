@@ -1,0 +1,45 @@
+{
+  "dashboard": {
+    "title": "Painel"
+  },
+
+  "nav": {
+    "preferences": {
+      "title": "Preferências",
+      "language": "Idioma",
+      "appearance": "Aparência",
+      "system": "Sistema",
+      "light": "Claro",
+      "dark": "Escuro"
+    },
+    "languages": {
+      "pt": "Português",
+      "en": "English"
+    },
+    "userMenu": {
+      "myAccount": "Minha conta",
+      "support": "Suporte",
+      "logout": "Sair"
+    }
+  },
+  "NotFound": {
+    "title": "Página não encontrada",
+    "description": "O endereço que procuras não existe ou foi movido. Volta ao painel e continua a partir daí.",
+    "goDashboard": "Ir para o painel",
+    "goLogin": "Iniciar sessão"
+  },
+  "pagination": {
+    "showing": "Página {current} de {total}",
+    "previous": "Anterior",
+    "next": "Próxima"
+  },
+  "settings": {
+    "title": "Definições",
+    "tabs": {
+      "general": "Geral",
+      "security": "Segurança",
+      "preferences": "Preferências",
+      "project": "Projeto"
+    }
+  }
+}

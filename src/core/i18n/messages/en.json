@@ -1,0 +1,45 @@
+{
+  "dashboard": {
+    "title": "Dashboard"
+  },
+  "nav": {
+    "preferences": {
+      "title": "Preferences",
+      "language": "Language",
+      "appearance": "Appearance",
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
+    "languages": {
+      "pt": "Portuguese",
+      "en": "English"
+    },
+    "userMenu": {
+      "myAccount": "My Account",
+      "support": "Support",
+      "logout": "Logout"
+    }
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The address you are looking for doesn't exist or has been moved. Head back to the dashboard and continue from there.",
+    "goDashboard": "Go to dashboard",
+    "goLogin": "Sign in"
+  },
+
+  "pagination": {
+    "showing": "Page {current} of {total}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "settings": {
+    "title": "Settings",
+    "tabs": {
+      "general": "General",
+      "security": "Security",
+      "preferences": "Preferences",
+      "project": "Project"
+    }
+  }
+}
