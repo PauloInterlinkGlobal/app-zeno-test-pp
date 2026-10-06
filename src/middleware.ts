@@ -5,20 +5,32 @@ import { NextResponse } from 'next/server';
 
 const intlMiddleware = createMiddleware(routing);
 
-const allowedIPs = new Set(
+const configuredAllowedIPs = new Set(
   (process.env.ALLOWED_IPS ?? '')
     .split(',')
     .map((ip) => ip.trim())
     .filter(Boolean)
 );
-allowedIPs.add('127.0.0.1');
-allowedIPs.add('::1');
 
 const SANDBOX_PREFIXES = ['sandboxapp.', 'sandboxadmin.', 'sandboxweb.'];
+const V0_PREVIEW_HOSTS = ['vusercontent.net', 'v0.dev'];
+
+function isPreviewHost(host: string | null) {
+  return Boolean(
+    host &&
+      V0_PREVIEW_HOSTS.some(
+        (suffix) => host === suffix || host.endsWith(`.${suffix}`)
+      )
+  );
+}
 
 export function middleware(request: NextRequest) {
   try {
-    if (process.env.MODE !== 'production') {
+    if (
+      process.env.MODE !== 'production' &&
+      configuredAllowedIPs.size > 0 &&
+      !isPreviewHost(request.headers.get('host'))
+    ) {
       const forwarded = request.headers.get('x-forwarded-for');
       const realIp = request.headers.get('x-real-ip');
 
@@ -30,7 +42,7 @@ export function middleware(request: NextRequest) {
         requestIp = requestIp.replace('::ffff:', '');
       }
 
-      if (!allowedIPs.has(requestIp)) {
+      if (!configuredAllowedIPs.has(requestIp)) {
         console.error(`[IP Blocked] IP não autorizado: ${requestIp}`);
 
         const host = request.headers.get('host');
