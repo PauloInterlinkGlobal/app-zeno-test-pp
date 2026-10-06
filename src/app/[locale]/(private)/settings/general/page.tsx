@@ -1,0 +1,26 @@
+import {
+  CompanyForm,
+  PERSONAL_MOCK,
+  PersonalForm,
+  SettingsSection,
+} from '@/modules/settings-general';
+
+export default function GeneralPage() {
+  return (
+    <div className="flex flex-col gap-10">
+      <SettingsSection
+        title="Pessoal"
+        description="Os teus dados pessoais e de acesso."
+      >
+        <PersonalForm defaultValues={PERSONAL_MOCK} />
+      </SettingsSection>
+
+      <SettingsSection
+        title="Empresa"
+        description="Informações da tua empresa."
+      >
+        <CompanyForm />
+      </SettingsSection>
+    </div>
+  );
+}
