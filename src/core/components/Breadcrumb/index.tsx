@@ -1,52 +1,46 @@
-"use client";
+'use client';
 
-import { ArrowLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { ArrowLeft, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
-import { usePathBreadcrumb } from "@/core/hooks/use-path-breadcrumb";
-import { usePathname, useRouter } from "@/core/i18n/navigation";
-import { DashboardBreadcrumbButtons } from "./BreadcrumbButtons/DashboardBreadcrumbButtons";
-import { ContactsBreadcrumbButtons } from "./BreadcrumbButtons/ContactsBreadcrumbButtons";
-import { HistoryBreadcrumbButtons } from "./BreadcrumbButtons/HistoryBreadcrumbButtons";
-import { ReportsBreadcrumbButtons } from "./BreadcrumbButtons/ReportsBreadcrumbButtons";
-import { SendersBreadcrumbButtons } from "./BreadcrumbButtons/SendersBreadcrumbButtons";
-import { TemplatesBreadcrumbButtons } from "./BreadcrumbButtons/TemplatesBreadcrumbButtons";
+import { usePathBreadcrumb } from '@/core/hooks/use-path-breadcrumb';
+import { usePathname, useRouter } from '@/core/i18n/navigation';
+import { ContactsBreadcrumbButtons } from './BreadcrumbButtons/ContactsBreadcrumbButtons';
+import { HistoryBreadcrumbButtons } from './BreadcrumbButtons/HistoryBreadcrumbButtons';
+import { ReportsBreadcrumbButtons } from './BreadcrumbButtons/ReportsBreadcrumbButtons';
+import { SendersBreadcrumbButtons } from './BreadcrumbButtons/SendersBreadcrumbButtons';
+import { TemplatesBreadcrumbButtons } from './BreadcrumbButtons/TemplatesBreadcrumbButtons';
 
 export function Breadcrumb() {
   const { items, title, description } = usePathBreadcrumb();
   const pathname = usePathname();
   const router = useRouter();
 
-  if (pathname === "/menu") return null;
+  if (pathname === '/menu') return null;
 
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = pathname.split('/').filter(Boolean);
   const lastSegment = segments[segments.length - 1];
 
   const backHref =
-    segments.length > 1 ? `/${segments.slice(0, -1).join("/")}` : "/menu";
+    segments.length > 1 ? `/${segments.slice(0, -1).join('/')}` : '/menu';
 
-  const isDashboard = lastSegment === "dashboard";
-  const isHistory = lastSegment === "history";
+  const isHistory = lastSegment === 'history';
   const isContactsPage =
-    segments.includes("contacts") && lastSegment === "contacts";
-  const isSendersPage = lastSegment === "senders";
+    segments.includes('contacts') && lastSegment === 'contacts';
+  const isSendersPage = lastSegment === 'senders';
   const isReportsPage =
-    lastSegment === "reports" || lastSegment === "relatorios";
+    lastSegment === 'reports' || lastSegment === 'relatorios';
   const isTemplatesPage =
-    lastSegment === "model-messanger" ||
-    lastSegment === "template" ||
-    lastSegment === "modelos";
+    lastSegment === 'model-messanger' ||
+    lastSegment === 'template' ||
+    lastSegment === 'modelos';
 
   const renderActions = () => {
-    if (isDashboard) {
-      return <DashboardBreadcrumbButtons />;
-    }
-
     if (isHistory) {
       return (
         <HistoryBreadcrumbButtons
-          onExport={() => console.log("Exportar histórico")}
-          onClear={() => console.log("Limpar histórico")}
+          onExport={() => console.log('Exportar histórico')}
+          onClear={() => console.log('Limpar histórico')}
         />
       );
     }
@@ -54,9 +48,9 @@ export function Breadcrumb() {
     if (isContactsPage) {
       return (
         <ContactsBreadcrumbButtons
-          onImport={() => router.push("/contacts/import")}
-          onExport={() => console.log("Exportar contactos")}
-          onAdd={() => console.log("Adicionar contacto")}
+          onImport={() => router.push('/contacts/import')}
+          onExport={() => console.log('Exportar contactos')}
+          onAdd={() => console.log('Adicionar contacto')}
         />
       );
     }

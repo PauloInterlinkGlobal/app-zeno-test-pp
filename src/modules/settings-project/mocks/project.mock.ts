@@ -1,41 +1,37 @@
-import type { ApiResponse, ProjectEntity } from "../interfaces";
+import type { ProjectInfo } from '../interfaces';
 
-/** Simula o ProjectEntity que virá do backend */
-export const PROJECT_MOCK: ProjectEntity = {
-  projectId: "proj_sms_001",
-  name: "SMSillico",
-  type: "Marketing",
-  description: "Plataforma de gestão de campanhas de SMS e automações.",
-  status: "active",
+export const PROJECT_MOCK: ProjectInfo = {
+  projectId: 'proj_sms_001',
+  name: 'SMS Illílico',
+  type: 'Marketing',
+  description: 'Plataforma de gestão de campanhas de SMS e automações.',
+  status: 'active',
+
   company: {
-    tradeName: "SMSillico",
-    nif: "5000000000",
-    sector: "Tecnologia",
+    tradeName: 'SMS Illílico',
+    nif: '123456789',
+    sector: 'Telecomunicações',
+
     contacts: {
-      phone: 923000000,
-      email: "empresa@smsillico.com",
-      isPhoneVerified: false,
+      phone: '+351 912 345 678',
+      isPhoneVerified: true,
+      email: 'contato@smsillico.com',
       isEmailVerified: true,
     },
+
     address: {
-      streetAddress: "Rua Principal",
-      neighborhood: "Talatona",
-      city: "Luanda",
-      country: "Angola",
+      streetAddress: 'Rua da Tecnologia, 245',
+      neighborhood: 'Centro',
+      city: 'Lisboa',
+      country: 'Portugal',
     },
-    website: "https://smsillico.com",
+
+    website: 'https://www.smsillico.com',
   },
-  owner: "64d8f3d77d9a4e2e5b8c1234",
-  customFields: [],
-  createdAt: "2026-02-01T10:00:00.000Z",
-};
 
-/** Resposta mock de `POST /api/v4/projects` (criar) */
-export const PROJECT_MOCK_RESPONSE: ApiResponse<ProjectEntity> = {
-  data: PROJECT_MOCK,
-};
+  owner: '64d8f3d77d9a4e2e5b8c1234',
+  webhookUrl: 'https://api.exemplo.com/webhooks/project-sms',
+  customFields: ['campanha', 'vendas', 'whatsapp'],
 
-/** Resposta mock de `/api/v4/projects` (projetos do utilizador) */
-export const PROJECTS_MOCK_RESPONSE: ApiResponse<ProjectEntity[]> = {
-  data: [PROJECT_MOCK],
+  createdAt: new Date(),
 };

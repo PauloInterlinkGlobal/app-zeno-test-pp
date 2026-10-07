@@ -1,66 +1,79 @@
-"use client";
+'use client';
 
-import { Button } from "@/core/components/Button";
-import { Input } from "@/core/components/Input";
-import { useToastStore } from "@/core/store";
-import { Building2 } from "lucide-react";
-import { useTranslations } from "next-intl";
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import type {
-  ProjectEntity,
-  ProjectFormData,
-  ProjectFormErrors,
-} from "../interfaces";
-import { createProject } from "../services/project.service";
-import {
-  toCreateProjectPayload,
-  toProjectFormData,
-} from "../utils/project-mapper";
+import { Input } from '@/core/components/Input';
+import { UserRound } from 'lucide-react';
+import { useState, type ChangeEvent, type FormEvent } from 'react';
+import type { ProjectInfo, ProjectStatus } from '../interfaces';
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const URL_REGEX = /^(https?:\/\/)?([\w-]+\.)+[a-z]{2,}(\/\S*)?$/i;
-const PHONE_REGEX = /^\+?\d{9,15}$/;
-const NIF_REGEX = /^[0-9A-Z]{9,14}$/i;
+type Errors = Partial<Record<string, string>>;
 
-type Translate = ReturnType<typeof useTranslations>;
+const STATUS_OPTIONS: Array<{ value: ProjectStatus; label: string }> = [
+  { value: 'active', label: 'Ativo' },
+  { value: 'suspended', label: 'Suspenso' },
+  { value: 'pending_deletion', label: 'Pendente de eliminação' },
+  { value: 'deleted', label: 'Eliminado' },
+];
 
-function validate(v: ProjectFormData, t: Translate): ProjectFormErrors {
-  const errors: ProjectFormErrors = {};
+const updateNestedValue = <T extends Record<string, any>>(
+  obj: T,
+  path: string,
+  value: string
+): T => {
+  const parts = path.split('.');
+  const [firstKey, ...rest] = parts;
 
-  if (!v.tradeName.trim()) errors.tradeName = t("errors.required");
-  if (v.nif.trim() && !NIF_REGEX.test(v.nif.trim()))
-    errors.nif = t("errors.nif");
-  if (v.email.trim() && !EMAIL_REGEX.test(v.email.trim()))
-    errors.email = t("errors.email");
-  if (v.phone.trim() && !PHONE_REGEX.test(v.phone.replace(/[\s-]/g, "")))
-    errors.phone = t("errors.phone");
-  if (v.website.trim() && !URL_REGEX.test(v.website.trim()))
-    errors.website = t("errors.website");
+  if (!firstKey) return obj;
+
+  if (rest.length === 0) {
+    return { ...obj, [firstKey]: value } as T;
+  }
+
+  return {
+    ...obj,
+    [firstKey]: updateNestedValue(obj[firstKey] ?? {}, rest.join('.'), value),
+  } as T;
+};
+
+function validate(v: ProjectInfo): Errors {
+  const errors: Errors = {};
+
+  if (!v.name.trim()) errors.name = 'Obrigatório';
+  if (!v.type.trim()) errors.type = 'Obrigatório';
+  if (!v.description.trim()) errors.description = 'Obrigatório';
+  if (!v.status) errors.status = 'Obrigatório';
+  if (!v.company.tradeName.trim()) errors['company.tradeName'] = 'Obrigatório';
+  if (!v.company.nif.trim()) errors['company.nif'] = 'Obrigatório';
+  if (!v.company.sector.trim()) errors['company.sector'] = 'Obrigatório';
+  if (!v.company.contacts?.email?.trim())
+    errors['company.contacts.email'] = 'Obrigatório';
 
   return errors;
 }
 
-interface ProjectFormProps {
-  initialData?: ProjectEntity | null;
-}
-
-export function ProjectForm({ initialData }: ProjectFormProps) {
-  const t = useTranslations("settings.project.companyData");
-  const { success, error } = useToastStore();
-
-  const [initial, setInitial] = useState<ProjectFormData>(() =>
-    toProjectFormData(initialData),
-  );
-  const [values, setValues] = useState<ProjectFormData>(initial);
-  const [errors, setErrors] = useState<ProjectFormErrors>({});
-  const [isLoading, setIsLoading] = useState(false);
+export function ProjectForm({ defaultValues }: { defaultValues: ProjectInfo }) {
+  const [initial, setInitial] = useState(defaultValues);
+  const [values, setValues] = useState(defaultValues);
+  const [errors, setErrors] = useState<Errors>({});
 
   const isDirty = JSON.stringify(values) !== JSON.stringify(initial);
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
-    setValues((prev) => ({ ...prev, [name]: value }));
+    setValues((prev) => updateNestedValue(prev, name, value));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
+
+  const handleCustomFieldsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setValues((prev) => ({
+      ...prev,
+      customFields: value
+        .split(',')
+        .map((item) => item.trim())
+        .filter(Boolean),
+    }));
   };
 
   const handleCancel = () => {
@@ -68,24 +81,14 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
     setErrors({});
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-
-    const found = validate(values, t);
+    const found = validate(values);
     setErrors(found);
     if (Object.keys(found).length > 0) return;
 
-    setIsLoading(true);
-    try {
-      // Sem HTTP: o serviço apenas regista o payload e simula a resposta.
-      await createProject(toCreateProjectPayload(values));
-      setInitial(values);
-      success(t("success"));
-    } catch {
-      error(t("errors.generic"));
-    } finally {
-      setIsLoading(false);
-    }
+    console.log(values);
+    setInitial(values);
   };
 
   return (
@@ -96,113 +99,211 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
     >
       <div className="flex items-start gap-4">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center text-primary">
-          <Building2 size={24} aria-hidden />
+          <UserRound size={24} aria-hidden />
         </span>
 
         <div className="min-w-0">
           <h2 className="text-lg font-bold leading-tight text-primary-content md:text-xl">
-            {t("title")}
+            Informação do projeto
           </h2>
-          <p className="mt-1 text-sm text-muted-content">{t("description")}</p>
+          <p className="mt-1 text-sm text-muted-content">
+            Atualize os dados do projeto e da empresa.
+          </p>
         </div>
       </div>
 
-      <fieldset
-        disabled={isLoading}
-        className="grid grid-cols-1 gap-4 md:grid-cols-2"
-      >
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
-          id="tradeName"
-          name="tradeName"
-          label={t("fields.tradeName.label")}
-          placeholder={t("fields.tradeName.placeholder")}
-          value={values.tradeName}
+          id="name"
+          name="name"
+          label="Nome do Projeto *"
+          placeholder="Digite o nome do projeto"
+          value={values.name ?? ''}
           onChange={handleChange}
-          error={errors.tradeName}
-          required
+          error={errors.name}
         />
 
         <Input
-          id="nif"
-          name="nif"
-          label={t("fields.nif.label")}
-          placeholder={t("fields.nif.placeholder")}
-          value={values.nif}
+          id="type"
+          name="type"
+          label="Tipo de Projeto *"
+          placeholder="Digite o tipo de projeto"
+          value={values.type ?? ''}
           onChange={handleChange}
-          error={errors.nif}
+          error={errors.type}
+        />
+
+        <div className="md:col-span-2">
+          <Input
+            id="description"
+            name="description"
+            label="Descrição do Projeto *"
+            placeholder="Digite a descrição do projeto"
+            value={values.description ?? ''}
+            onChange={handleChange}
+            error={errors.description}
+          />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label
+            htmlFor="status"
+            className="text-sm font-medium text-primary-content"
+          >
+            Status do Projeto *
+          </label>
+          <select
+            id="status"
+            name="status"
+            value={values.status ?? ''}
+            onChange={handleChange}
+            className="w-full rounded-lg border border-gray-300 bg-white p-2.5 text-sm text-primary-content outline-none transition focus:border-primary"
+          >
+            <option value="">Selecione o status</option>
+            {STATUS_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          {errors.status ? (
+            <p className="text-xs text-red-500">{errors.status}</p>
+          ) : null}
+        </div>
+
+        <Input
+          id="company.tradeName"
+          name="company.tradeName"
+          label="Nome fantasia *"
+          placeholder="Digite o nome fantasia"
+          value={values.company.tradeName ?? ''}
+          onChange={handleChange}
+          error={errors['company.tradeName']}
         />
 
         <Input
-          id="streetAddress"
-          name="streetAddress"
-          label={t("fields.streetAddress.label")}
-          placeholder={t("fields.streetAddress.placeholder")}
-          value={values.streetAddress}
+          id="company.nif"
+          name="company.nif"
+          label="NIF *"
+          placeholder="Digite o NIF"
+          value={values.company.nif ?? ''}
           onChange={handleChange}
-          error={errors.streetAddress}
+          error={errors['company.nif']}
         />
 
         <Input
-          id="sector"
-          name="sector"
-          label={t("fields.sector.label")}
-          placeholder={t("fields.sector.placeholder")}
-          value={values.sector}
+          id="company.sector"
+          name="company.sector"
+          label="Setor *"
+          placeholder="Digite o setor"
+          value={values.company.sector ?? ''}
           onChange={handleChange}
-          error={errors.sector}
+          error={errors['company.sector']}
         />
 
         <Input
-          id="email"
-          name="email"
-          type="email"
-          label={t("fields.email.label")}
-          placeholder={t("fields.email.placeholder")}
-          value={values.email}
+          id="company.contacts.phone"
+          name="company.contacts.phone"
+          label="Telefone"
+          placeholder="Digite o telefone"
+          value={values.company.contacts?.phone ?? ''}
           onChange={handleChange}
-          error={errors.email}
         />
 
         <Input
-          id="phone"
-          name="phone"
-          type="tel"
-          inputMode="tel"
-          label={t("fields.phone.label")}
-          placeholder={t("fields.phone.placeholder")}
-          value={values.phone}
+          id="company.contacts.email"
+          name="company.contacts.email"
+          label="Email da empresa *"
+          placeholder="Digite o email"
+          value={values.company.contacts?.email ?? ''}
           onChange={handleChange}
-          error={errors.phone}
+          error={errors['company.contacts.email']}
         />
 
         <Input
-          id="website"
-          name="website"
-          type="url"
-          label={t("fields.website.label")}
-          placeholder={t("fields.website.placeholder")}
-          value={values.website}
+          id="company.website"
+          name="company.website"
+          label="Website"
+          placeholder="https://"
+          value={values.company.website ?? ''}
           onChange={handleChange}
-          error={errors.website}
         />
-      </fieldset>
 
-      <div className="flex justify-end gap-2 border-t border-divider pt-4">
-        <Button
+        <Input
+          id="company.address.streetAddress"
+          name="company.address.streetAddress"
+          label="Endereço"
+          placeholder="Rua, número, complemento"
+          value={values.company.address?.streetAddress ?? ''}
+          onChange={handleChange}
+        />
+
+        <Input
+          id="company.address.neighborhood"
+          name="company.address.neighborhood"
+          label="Bairro"
+          placeholder="Digite o bairro"
+          value={values.company.address?.neighborhood ?? ''}
+          onChange={handleChange}
+        />
+
+        <Input
+          id="company.address.city"
+          name="company.address.city"
+          label="Cidade"
+          placeholder="Digite a cidade"
+          value={values.company.address?.city ?? ''}
+          onChange={handleChange}
+        />
+
+        <Input
+          id="company.address.country"
+          name="company.address.country"
+          label="País"
+          placeholder="Digite o país"
+          value={values.company.address?.country ?? ''}
+          onChange={handleChange}
+        />
+
+        <Input
+          id="webhookUrl"
+          name="webhookUrl"
+          label="Webhook URL"
+          placeholder="https://api.exemplo.com/webhook"
+          value={values.webhookUrl ?? ''}
+          onChange={handleChange}
+        />
+
+        <div className="md:col-span-2">
+          <Input
+            id="customFields"
+            name="customFields"
+            label="Custom fields"
+            placeholder="campo1, campo2, campo3"
+            value={values.customFields.join(', ')}
+            onChange={handleCustomFieldsChange}
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2 border-t border-black/5 pt-4">
+        <button
           type="button"
-          variant="ghost"
           onClick={handleCancel}
-          disabled={!isDirty || isLoading}
+          disabled={!isDirty}
+          className="rounded-xl px-5 py-2.5 text-sm font-medium text-muted-content transition-colors hover:bg-item-hover hover:text-primary-content disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {t("actions.cancel")}
-        </Button>
+          Cancelar
+        </button>
 
-        <Button type="submit" disabled={!isDirty} isLoading={isLoading}>
-          {t("actions.save")}
-        </Button>
+        <button
+          type="submit"
+          disabled={!isDirty}
+          className="rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Guardar alterações
+        </button>
       </div>
     </form>
   );
 }
-
-export default ProjectForm;
