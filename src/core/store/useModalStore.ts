@@ -17,7 +17,7 @@ export type ModalType =
   | 'DELETE_DRAFT_SMS'
   | 'DETAIL_SCHEDULED_SMS'
   | 'DELETE_SCHEDULED_SMS'
-  | 'GENERATE_DASHBOARD_REPORT'
+  | 'GENERATE_REPORT'
   | null;
 
 type State = {

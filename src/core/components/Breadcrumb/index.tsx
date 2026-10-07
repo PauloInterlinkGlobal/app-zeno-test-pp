@@ -1,11 +1,10 @@
 "use client";
 
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ChevronRight, List } from "lucide-react";
 import Link from "next/link";
 
 import { usePathBreadcrumb } from "@/core/hooks/use-path-breadcrumb";
 import { usePathname, useRouter } from "@/core/i18n/navigation";
-import { DashboardBreadcrumbButtons } from "./BreadcrumbButtons/DashboardBreadcrumbButtons";
 import { ContactsBreadcrumbButtons } from "./BreadcrumbButtons/ContactsBreadcrumbButtons";
 import { HistoryBreadcrumbButtons } from "./BreadcrumbButtons/HistoryBreadcrumbButtons";
 import { ReportsBreadcrumbButtons } from "./BreadcrumbButtons/ReportsBreadcrumbButtons";
@@ -22,10 +21,6 @@ export function Breadcrumb() {
   const segments = pathname.split("/").filter(Boolean);
   const lastSegment = segments[segments.length - 1];
 
-  const backHref =
-    segments.length > 1 ? `/${segments.slice(0, -1).join("/")}` : "/menu";
-
-  const isDashboard = lastSegment === "dashboard";
   const isHistory = lastSegment === "history";
   const isContactsPage =
     segments.includes("contacts") && lastSegment === "contacts";
@@ -38,10 +33,6 @@ export function Breadcrumb() {
     lastSegment === "modelos";
 
   const renderActions = () => {
-    if (isDashboard) {
-      return <DashboardBreadcrumbButtons />;
-    }
-
     if (isHistory) {
       return (
         <HistoryBreadcrumbButtons
@@ -113,14 +104,14 @@ export function Breadcrumb() {
         </nav>
 
         <div className="flex items-center gap-2">
-          {/* Mobile e tablet: seta de voltar */}
+          {/* Mobile e tablet: botão para abrir o menu */}
           <button
             type="button"
-            onClick={() => router.push(backHref)}
-            aria-label="Voltar"
+            onClick={() => router.push("/menu")}
+            aria-label="Abrir menu"
             className="-ml-2 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-content transition-colors hover:bg-surface-raised active:bg-surface-subtle lg:hidden"
           >
-            <ArrowLeft size={24} />
+            <List size={24} />
           </button>
 
           <div className="flex min-w-0 flex-1 flex-col gap-1">
