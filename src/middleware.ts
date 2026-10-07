@@ -81,7 +81,10 @@ export function middleware(request: NextRequest) {
 
     const response = intlResponse || NextResponse.next();
 
-    response.headers.set('X-Frame-Options', 'DENY');
+    // Em desenvolvimento permite embeber a app em iframes (previews).
+    if (process.env.NODE_ENV === 'production') {
+      response.headers.set('X-Frame-Options', 'DENY');
+    }
     response.headers.set('X-Content-Type-Options', 'nosniff');
     response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
 
