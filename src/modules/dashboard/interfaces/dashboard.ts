@@ -1,4 +1,4 @@
-export type StatIconType = "campaigns" | "messages" | "users" | "deliveryRate";
+export type StatIconType = 'campaigns' | 'messages' | 'users' | 'deliveryRate';
 
 export interface IStatCard {
   label: string;
@@ -17,7 +17,7 @@ export interface IChartData {
 export interface ICampaign {
   id: string;
   name: string;
-  status: "active" | "paused" | "completed";
+  status: 'active' | 'paused' | 'completed';
   sent: number;
   delivered: number;
   date: string;
