@@ -1,1 +1,0 @@
-export { GenerateReportModal } from "./GenerateReportModal";
