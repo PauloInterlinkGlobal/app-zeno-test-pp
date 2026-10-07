@@ -1,3 +1,4 @@
+import { GenerateReportModal } from '@/modules/dashboard/components/Report';
 import { DashboardCharts } from '@/modules/dashboard/components/Chart/DashboardCharts';
 import { DashboardStats } from '@/modules/dashboard/components/Stats/DashboardStats';
 import { DashboardRecentTable } from '@/modules/dashboard/components/Table/DashboardRecentTable';
@@ -15,6 +16,8 @@ export default async function DashboardPage() {
       <DashboardStats stats={stats} />
       <DashboardCharts chartData={chartData} />
       <DashboardRecentTable campaigns={recentCampaigns} />
+
+      <GenerateReportModal />
     </div>
   );
 }
