@@ -1,5 +1,5 @@
-import { IStatCard } from '@/modules/dashboard/interfaces/dashboard';
-import { StatsCard } from './StatsCard';
+import { IStatCard } from "@/modules/dashboard/interfaces/dashboard";
+import { StatsCard } from "./StatsCard";
 
 interface DashboardStatsProps {
   stats: IStatCard[];

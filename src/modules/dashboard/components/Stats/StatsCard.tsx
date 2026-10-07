@@ -1,5 +1,5 @@
-import { IStatCard } from '@/modules/dashboard/interfaces/dashboard';
-import { LucideIcon, TrendingDown, TrendingUp } from 'lucide-react';
+import { IStatCard } from "@/modules/dashboard/interfaces/dashboard";
+import { LucideIcon, TrendingDown, TrendingUp } from "lucide-react";
 
 interface StatsCardProps extends IStatCard {
   icon?: LucideIcon;
@@ -20,7 +20,7 @@ export function StatsCard({
   const badgeClass =
     iconBg && iconColor
       ? `${iconBg} ${iconColor}`
-      : 'bg-primary/10 text-primary';
+      : "bg-primary/10 text-primary";
 
   return (
     <div className="flex items-start justify-between gap-4 rounded-2xl border border-border-ui bg-surface p-5 transition-all duration-200 hover:shadow-sm">
@@ -33,7 +33,7 @@ export function StatsCard({
         </span>
         <div
           className={`flex items-center gap-1.5 text-xs font-semibold ${
-            trendUp ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-500'
+            trendUp ? "text-emerald-600 dark:text-emerald-400" : "text-rose-500"
           }`}
         >
           {trendUp ? (

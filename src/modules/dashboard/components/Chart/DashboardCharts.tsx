@@ -1,5 +1,5 @@
-import { IChartData } from '@/modules/dashboard/interfaces/dashboard';
-import { ChartLine } from './ChartLine';
+import { IChartData } from "@/modules/dashboard/interfaces/dashboard";
+import { ChartLine } from "./ChartLine";
 
 interface DashboardChartsProps {
   chartData: IChartData[];
