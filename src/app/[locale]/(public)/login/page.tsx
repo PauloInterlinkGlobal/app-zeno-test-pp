@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import LoginForm from '@/modules/login/components/LoginForm';
+import LoginForm from '@/modules/auth/login/components/LoginForm';
 
 export const metadata: Metadata = {
   title: 'Login | SMSillico',

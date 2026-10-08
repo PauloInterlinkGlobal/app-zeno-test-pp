@@ -1,9 +1,8 @@
 import {
-  CompanyForm,
   PERSONAL_MOCK,
   PersonalForm,
-  SettingsSection,
-} from '@/modules/settings-general';
+  SettingsSection
+} from '@/modules/settings/settings-general';
 
 export default function GeneralPage() {
   return (
@@ -15,12 +14,7 @@ export default function GeneralPage() {
         <PersonalForm defaultValues={PERSONAL_MOCK} />
       </SettingsSection>
 
-      <SettingsSection
-        title="Empresa"
-        description="Informações da tua empresa."
-      >
-        <CompanyForm />
-      </SettingsSection>
+     
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import RegisterForm from '@/modules/register/components/RegisterForm';
+import RegisterForm from '@/modules/auth/register/components/RegisterForm';
 
 export const metadata: Metadata = {
   title: 'Criar Conta | SMSillico',

@@ -4,13 +4,37 @@ import { notFound } from 'next/navigation';
 
 export default async function PaymentDetailsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ reference: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { reference } = await params;
-  const payment = getPaymentByReference(decodeURIComponent(reference));
+  const { amount: rawAmount } = await searchParams;
 
-  if (!payment) notFound();
+  const decodedReference = decodeURIComponent(reference);
+  const payment = getPaymentByReference(decodedReference);
 
-  return <PaymentDetails payment={payment} />;
+  if (payment) {
+    return <PaymentDetails payment={payment} />;
+  }
+
+  const amount = Number(Array.isArray(rawAmount) ? rawAmount[0] : rawAmount);
+
+  if (!amount || Number.isNaN(amount)) {
+    notFound();
+  }
+
+  return (
+    <PaymentDetails
+      payment={{
+        id: decodedReference,
+        reference: decodedReference,
+        method: 'transfer',
+        amount,
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+      }}
+    />
+  );
 }
